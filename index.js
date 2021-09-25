@@ -1,12 +1,12 @@
-const { response } = require('express')
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 
-//const morganConfig = `:method :url :status :res[content-length] - :response-time ms`
 const morganConfig = (tokens, req, res) => {
   const dataSent = JSON.stringify(req.body)
 
@@ -20,6 +20,7 @@ const morganConfig = (tokens, req, res) => {
     dataSent === '{}' ? '' : dataSent
   ].join(' ')
 }
+
 app.use(morgan(morganConfig))
 
 let persons = [
