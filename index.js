@@ -5,7 +5,22 @@ const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
-app.use(morgan('tiny'))
+
+//const morganConfig = `:method :url :status :res[content-length] - :response-time ms`
+const morganConfig = (tokens, req, res) => {
+  const dataSent = JSON.stringify(req.body)
+
+  console.log(dataSent)
+  return [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    tokens.res(req, res, 'content-length'), '-',
+    tokens['response-time'](req, res), 'ms',
+    dataSent === '{}' ? '' : dataSent
+  ].join(' ')
+}
+app.use(morgan(morganConfig))
 
 let persons = [
     {
