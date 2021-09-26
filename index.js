@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
-const morgan = require('morgan')
 const cors = require('cors')
+const morgan = require('morgan')
 require('dotenv').config()
 const Person = require('./models/person')
 
@@ -64,10 +64,6 @@ app.get('/api/persons/:id', (request, response) => {
   })
 })
 
-const generateId = () => {
-  return Math.floor(Math.random() * 1000000)
-}
-
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
@@ -96,13 +92,13 @@ app.post('/api/persons', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(person => person.id !== id)
-
-  response.status(204).end()
+  Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
