@@ -1,8 +1,9 @@
 const express = require('express')
+const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
-
-const app = express()
+require('dotenv').config()
+const Person = require('./models/person')
 
 app.use(express.static('build'))
 app.use(cors())
@@ -52,18 +53,15 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons);
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-
-  if (person) {
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  })
 })
 
 const generateId = () => {
