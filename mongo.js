@@ -30,7 +30,7 @@ if (name) {
     number
   })
 
-  person.save().then(result => {
+  person.save().then(() => {
     console.log(`added ${name} number ${number} to phonebook`)
     mongoose.connection.close()
   })
@@ -43,6 +43,6 @@ if (name) {
 
     console.log('closing')
     mongoose.connection.close()
-    console.log('done closing');
+    console.log('done closing')
   })
 }
