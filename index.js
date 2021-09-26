@@ -49,7 +49,13 @@ let persons = [
 ]
 
 app.get('/info', (request, response) => {
-  response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${Date()}</p>`)
+  Person.estimatedDocumentCount((error, count) => {
+    if (error) {
+      console.log(error)
+    } else {
+      response.send(`<p>Phonebook has info for ${count} people</p><p>${Date()}</p>`)
+    }
+  })
 })
 
 app.get('/api/persons', (request, response) => {
@@ -58,10 +64,16 @@ app.get('/api/persons', (request, response) => {
   })
 })
 
-app.get('/api/persons/:id', (request, response) => {
-  Person.findById(request.params.id).then(person => {
-    response.json(person)
-  })
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response) => {
