@@ -25,29 +25,6 @@ const morganConfig = (tokens, req, res) => {
 
 app.use(morgan(morganConfig))
 
-let persons = [
-    {
-      "id": 1,
-      "name": "Arto Hellas",
-      "number": "040-123456"
-    },
-    {
-      "id": 2,
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523"
-    },
-    {
-      "id": 3,
-      "name": "Dan Abramov",
-      "number": "12-43-234345"
-    },
-    {
-      "id": 4,
-      "name": "Mary Poppendieck",
-      "number": "39-23-6423122"
-    }
-]
-
 app.get('/info', (request, response) => {
   Person.estimatedDocumentCount((error, count) => {
     if (error) {
@@ -79,20 +56,6 @@ app.get('/api/persons/:id', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
-  /*if (!body.name) {
-    return response.status(400).json({
-      error: 'name must not be empty'
-    })
-  } else if (!body.number) {
-    return response.status(400).json({
-      error: 'number must not be empty'
-    })
-  } else if (persons.find(person => person.name === body.name)) {
-    return response.status(400).json({
-      error: 'name must be unique'
-    })
-  }*/
-
   const person = new Person({
     name: body.name,
     number: body.number
@@ -115,7 +78,7 @@ app.put('/api/persons/:id', (request, response, next) => {
     number: body.number
   }
 
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true })
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
