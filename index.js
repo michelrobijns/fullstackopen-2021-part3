@@ -79,21 +79,20 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({
       error: 'number must not be empty'
     })
-  } else if (persons.find(person => person.name === body.name)) {
+  }/* else if (persons.find(person => person.name === body.name)) {
     return response.status(400).json({
       error: 'name must be unique'
     })
-  }
+  }*/
 
-  const person = {
-    id: generateId(),
+  const person = new Person({
     name: body.name,
     number: body.number
-  }
+  })
 
-  persons = persons.concat(person)
-
-  response.json(person)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
