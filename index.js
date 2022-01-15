@@ -1,15 +1,15 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
+const Person = require('./models/person')
 const cors = require('cors')
 const morgan = require('morgan')
-require('dotenv').config()
-const Person = require('./models/person')
 
-app.use(express.static('build'))
 app.use(cors())
+app.use(express.static('build'))
 app.use(express.json())
 
-const morganConfig = (tokens, req, res) => {
+app.use(morgan((tokens, req, res) => {
   const dataSent = JSON.stringify(req.body)
 
   console.log(dataSent)
@@ -21,9 +21,7 @@ const morganConfig = (tokens, req, res) => {
     tokens['response-time'](req, res), 'ms',
     dataSent === '{}' ? '' : dataSent
   ].join(' ')
-}
-
-app.use(morgan(morganConfig))
+}))
 
 app.get('/info', (request, response) => {
   Person.estimatedDocumentCount((error, count) => {
@@ -93,11 +91,6 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-const PORT = process.env.PORT
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
-
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
@@ -111,3 +104,8 @@ const errorHandler = (error, request, response, next) => {
 }
 
 app.use(errorHandler)
+
+const PORT = process.env.PORT
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
